@@ -28,7 +28,7 @@
 * **Real-Time KPI Engine:** Computes Total Revenue, Total Expenses, Net Cash Flow, and Profit Margins dynamically.
 * **Automated Cash Flow Summaries:** Parses timestamps and automatically calculates Inflow, Outflow, and Net Flow grouped by Day, Month, and Year in highly readable side-by-side data tables.
 * **Interactive Visual Analytics:** Utilizes `Plotly Express` to generate theme-responsive pie charts and bar graphs mapping expense distributions and top transactions.
-* **AI Context Compression Engine:** Dynamically groups and aggregates raw transaction datasets before sending them to the Groq API. This bypasses strict free-tier token limits (HTTP 413) and guarantees zero mathematical hallucinations without dropping critical financial data.
+* **AI Context Compression Engine:** Dynamically groups, sorts, and prioritizes the top 100 most impactful transactions before sending them to the Groq API. This bypasses strict free-tier token limits (HTTP 413) and guarantees zero mathematical hallucinations for category totals.
 * **Global Keyword Search & Filtering:** Instantly filters transactions across categories and keywords.
 * **Instant CFO Audit Report:** Generates a 3-bullet executive summary evaluating profitability and highlighting operational risks.
 * **Interactive AI Chat Interface:** Features persistent conversation history in the interface, allowing users to query transaction logs using natural language.
@@ -63,7 +63,7 @@ QuantCFO integrates Meta's Llama 3.1 (8b-instant) model via the Groq API to prov
 
 To improve numerical consistency and overcome common Large Language Model limitations regarding math hallucinations, financial summaries and category totals are deterministically computed with Pandas before being injected into the LLM prompt context. 
 
-Additionally, an integrated **Context Compression Engine** aggregates repetitive transactions into single grouped totals before querying the AI. This engineering choice guarantees that the application never exceeds strict free-tier API token limits while preserving 100% accurate financial totals.
+Additionally, an integrated **Context Compression Engine** aggregates repetitive transactions and strictly filters for the Top 100 most financially impactful records before querying the AI. This engineering choice guarantees that the application never exceeds strict free-tier API token limits (HTTP 413) while preserving 100% accurate top-level financial totals.
 
 **Core System Prompt Used for Data Querying & Analysis:**
 ```text

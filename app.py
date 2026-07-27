@@ -158,6 +158,10 @@ if uploaded_files:
     # Aggregate transactions by Description to massively compress token size without losing ANY transaction data
     ai_raw_df['Formatted Amount'] = ai_raw_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
     compressed_df = ai_raw_df.groupby(['Category', 'Type', 'Description'], as_index=False)['Amount'].sum()
+    
+    # HARD CAP to prevent HTTP 413: Sort by highest value and take top 100 unique merchants only
+    compressed_df = compressed_df.reindex(compressed_df['Amount'].abs().sort_values(ascending=False).index).head(100)
+    
     compressed_df['Formatted Total'] = compressed_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
     context_data = compressed_df[['Category', 'Type', 'Description', 'Formatted Total']].to_string(index=False)
 
