@@ -16,7 +16,9 @@
 ---
 
 ## b. Live Deployed URL
-🔗 **Access the Live Application Here:** [Insert your deployed Streamlit Community Cloud URL here]
+🔗 **Access the Live Application Here:** https://quantcfo-sa8ldag6fnnkdgvc3heg6p.streamlit.app/
+
+*(Note: The live deployed version on Streamlit Community Cloud has a platform-enforced hard limit of 200MB for CSV file uploads. When run locally, this limit is extended up to 1GB.)*
 
 ---
 
@@ -102,7 +104,7 @@ Follow these instructions to set up and run QuantCFO on your local machine:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/QuantCFO.git
+git clone https://github.com/lrwa334/QuantCFO.git
 cd QuantCFO
 ```
 
