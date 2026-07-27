@@ -41,6 +41,12 @@ with st.sidebar:
     
     st.markdown("---")
     
+    # Currency Symbol Selection
+    currency_options = ["Rs", "PKR", "$", "€", "£", "₹", "¥"]
+    currency_symbol = st.selectbox("💵 Currency Symbol", currency_options, index=0)
+    
+    st.markdown("---")
+    
     # Chart Color Palette Selection
     palette_choice = st.selectbox("🎨 Chart Color Palette", ["Vibrant", "Cool Tech", "Pastel"])
     
@@ -65,8 +71,21 @@ if uploaded_files:
             continue
             
         file.seek(0)
-        temp_df = pd.read_csv(file)
-        
+        try:
+            temp_df = pd.read_csv(file)
+        except pd.errors.ParserError:
+            # Handle files with preambles (like bank statements)
+            file.seek(0)
+            lines = file.readlines()
+            start_row = 0
+            for i, line in enumerate(lines):
+                decoded_line = line.decode('utf-8', errors='ignore').lower() if isinstance(line, bytes) else line.lower()
+                if any(kw in decoded_line for kw in ['date', 'timestamp', 'description', 'amount']):
+                    start_row = i
+                    break
+            file.seek(0)
+            temp_df = pd.read_csv(file, skiprows=start_row)
+            
         # --- SMART SCHEMA ADAPTER ---
         rename_dict = {}
         for col in temp_df.columns:
@@ -93,8 +112,21 @@ if uploaded_files:
         df_list.append(temp_df)
 
     df = pd.concat(df_list, ignore_index=True) if df_list else pd.DataFrame()
-    df['Amount'] = pd.to_numeric(df['Amount'], errors='coerce').fillna(0)
-    
+    if not df.empty:
+        # Handle commas, plus signs, and accounting format parentheses (e.g. "(1,500)" -> "-1500")
+        df['Amount'] = df['Amount'].astype(str).str.strip()
+        df['Amount'] = df['Amount'].str.replace(',', '', regex=False).str.replace('+', '', regex=False)
+        df['Amount'] = df['Amount'].str.replace(r'^\((.*)\)$', r'-\1', regex=True)
+        df['Amount'] = pd.to_numeric(df['Amount'], errors='coerce').fillna(0)
+        
+        # Prevent errors from blank rows in categorical columns
+        if 'Category' in df.columns:
+            df['Category'] = df['Category'].fillna('Uncategorized').astype(str)
+        if 'Description' in df.columns:
+            df['Description'] = df['Description'].fillna('No Description').astype(str)
+    else:
+        df['Amount'] = pd.Series(dtype=float)
+
     categories = df['Category'].unique().tolist()
     selected_categories = st.sidebar.multiselect("Filter Categories:", options=categories, default=categories)
     
@@ -114,12 +146,12 @@ if uploaded_files:
     # PRE-FORMATTING AI CONTEXT (Forces the AI to see clean dollar amounts instead of raw negative numbers)
     ai_totals_df = filtered_df.groupby('Category', as_index=False)['Amount'].sum()
     ai_totals_df['Type'] = ai_totals_df['Amount'].apply(lambda x: 'Income' if x >= 0 else 'Expense')
-    ai_totals_df['Formatted Amount'] = ai_totals_df['Amount'].abs().apply(lambda x: f"${x:,.2f}")
+    ai_totals_df['Formatted Amount'] = ai_totals_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
     category_totals_str = ai_totals_df[['Category', 'Type', 'Formatted Amount']].to_string(index=False)
     
     ai_raw_df = filtered_df.copy()
     ai_raw_df['Type'] = ai_raw_df['Amount'].apply(lambda x: 'Income' if x >= 0 else 'Expense')
-    ai_raw_df['Formatted Amount'] = ai_raw_df['Amount'].abs().apply(lambda x: f"${x:,.2f}")
+    ai_raw_df['Formatted Amount'] = ai_raw_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
     
     # Only pass relevant columns to the AI to prevent confusion
     columns_for_ai = [col for col in ai_raw_df.columns if col not in ['Amount']]
@@ -137,9 +169,9 @@ if uploaded_files:
         st.subheader(f"Key Performance Indicators — Viewing: {selected_view}")
         
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Total Revenue", f"${total_revenue:,.2f}")
-        c2.metric("Total Expenses", f"${total_expenses:,.2f}")
-        c3.metric("Net Cash Flow", f"${net_profit:,.2f}")
+        c1.metric("Total Revenue", f"{currency_symbol} {total_revenue:,.2f}")
+        c2.metric("Total Expenses", f"{currency_symbol} {total_expenses:,.2f}")
+        c3.metric("Net Cash Flow", f"{currency_symbol} {net_profit:,.2f}")
         c4.metric("Profit Margin", f"{profit_margin:.1f}%")
 
         st.markdown("---")
@@ -193,7 +225,7 @@ if uploaded_files:
             if st.button("Generate Full Audit Report"):
                 try:
                     client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-                    summary_str = f"Dataset: {selected_view}. Revenue: ${total_revenue:,.2f}, Expenses: ${total_expenses:,.2f}, Net: ${net_profit:,.2f}."
+                    summary_str = f"Dataset: {selected_view}. Revenue: {currency_symbol} {total_revenue:,.2f}, Expenses: {currency_symbol} {total_expenses:,.2f}, Net: {currency_symbol} {net_profit:,.2f}."
                     
                     prompt = f"""
                     You are a Senior CFO Consultant. Analyze this financial summary for dataset '{selected_view}': {summary_str}.
@@ -276,7 +308,7 @@ if uploaded_files:
                 if scenario_input:
                     try:
                         client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-                        sim_summary = f"Current Revenue: ${total_revenue:,.2f}, Current Expenses: ${total_expenses:,.2f}, Net Profit: ${net_profit:,.2f}."
+                        sim_summary = f"Current Revenue: {currency_symbol} {total_revenue:,.2f}, Current Expenses: {currency_symbol} {total_expenses:,.2f}, Net Profit: {currency_symbol} {net_profit:,.2f}."
                         
                         sim_prompt = f"""
                         You are an expert Financial Modeler and CFO. Based on the current baseline ({sim_summary}), evaluate the following user simulation scenario:

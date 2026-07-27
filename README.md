@@ -23,7 +23,8 @@
 ---
 
 ## c. Comprehensive Features List
-* **Smart Schema Adapter (ETL):** Automatically detects and standardizes messy CSV file structures, mapping varied column titles (e.g., `cost`, `price`, `value` $\rightarrow$ `Amount`) without manual user configuration.
+* **Smart Schema Adapter (ETL) & Robust Parsing:** Automatically detects and standardizes messy CSV file structures (like bank statement preambles). It maps varied column titles, handles accounting number formats (like `(1,500)` or `+2,500`), and gracefully manages blank categories without manual configuration.
+* **Dynamic Currency Support:** Allows users to dynamically input their local currency symbol (e.g., `$`, `Rs`, `€`) via the sidebar, which instantly updates all charts, AI prompts, and financial metrics.
 * **Real-Time KPI Engine:** Computes Total Revenue, Total Expenses, Net Cash Flow, and Profit Margins dynamically.
 * **Interactive Visual Analytics:** Utilizes `Plotly Express` to generate theme-responsive pie charts and bar graphs mapping expense distributions and cash flow comparisons.
 * **Global Keyword Search & Filtering:** Instantly filters transactions across categories and keywords.
