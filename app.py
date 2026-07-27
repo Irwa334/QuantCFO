@@ -15,6 +15,7 @@ if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
 
 st.title("🪙 QuantCFO — AI-Powered Financial Intelligence Dashboard")
+st.caption("🔄 Version Sync Test - If you see this, Streamlit has updated!")
 
 # --- SIDEBAR: Controls & Settings ---
 with st.sidebar:
