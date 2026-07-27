@@ -96,6 +96,8 @@ if uploaded_files:
                 rename_dict[col] = 'Category'
             elif c_lower in ['description', 'desc', 'name', 'item', 'title', 'memo', 'details']:
                 rename_dict[col] = 'Description'
+            elif c_lower in ['date', 'time', 'timestamp', 'created', 'date/time']:
+                rename_dict[col] = 'Date'
         temp_df = temp_df.rename(columns=rename_dict)
 
         if 'Amount' not in temp_df.columns:
@@ -124,6 +126,8 @@ if uploaded_files:
             df['Category'] = df['Category'].fillna('Uncategorized').astype(str)
         if 'Description' in df.columns:
             df['Description'] = df['Description'].fillna('No Description').astype(str)
+        if 'Date' in df.columns:
+            df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
     else:
         df['Amount'] = pd.Series(dtype=float)
 
@@ -206,6 +210,35 @@ if uploaded_files:
         st.write("### Top 5 Largest Transactions")
         sorted_df = filtered_df.reindex(filtered_df['Amount'].abs().sort_values(ascending=False).index)
         st.dataframe(sorted_df.head(5), use_container_width=True)
+        
+        if 'Date' in filtered_df.columns and not filtered_df['Date'].isna().all():
+            st.write("### Cash Flow Summaries (Inflow, Outflow, & Net)")
+            flow_df = filtered_df.dropna(subset=['Date']).copy()
+            flow_df['Inflow'] = flow_df['Amount'].apply(lambda x: x if x >= 0 else 0)
+            flow_df['Outflow'] = flow_df['Amount'].apply(lambda x: abs(x) if x < 0 else 0)
+            flow_df['Net Flow'] = flow_df['Inflow'] - flow_df['Outflow']
+            
+            # Group by Day, Month, and Year
+            flow_df['Day'] = flow_df['Date'].dt.strftime('%Y-%m-%d')
+            daily_flow = flow_df.groupby('Day', as_index=False)[['Inflow', 'Outflow', 'Net Flow']].sum()
+            
+            flow_df['Month'] = flow_df['Date'].dt.strftime('%Y-%m')
+            monthly_flow = flow_df.groupby('Month', as_index=False)[['Inflow', 'Outflow', 'Net Flow']].sum()
+            
+            flow_df['Year'] = flow_df['Date'].dt.strftime('%Y')
+            yearly_flow = flow_df.groupby('Year', as_index=False)[['Inflow', 'Outflow', 'Net Flow']].sum()
+            
+            # Display side-by-side tables
+            col_d, col_m, col_y = st.columns(3)
+            with col_d:
+                st.write("**Daily Flow**")
+                st.dataframe(daily_flow, use_container_width=True, hide_index=True)
+            with col_m:
+                st.write("**Monthly Flow**")
+                st.dataframe(monthly_flow, use_container_width=True, hide_index=True)
+            with col_y:
+                st.write("**Yearly Flow**")
+                st.dataframe(yearly_flow, use_container_width=True, hide_index=True)
 
         if not exp_df.empty:
             st.write("### Expense Distribution")

@@ -26,7 +26,9 @@
 * **Smart Schema Adapter (ETL) & Robust Parsing:** Automatically detects and standardizes messy CSV file structures (like bank statement preambles). It maps varied column titles, handles accounting number formats (like `(1,500)` or `+2,500`), and gracefully manages blank categories without manual configuration.
 * **Dynamic Currency Support:** Allows users to dynamically input their local currency symbol (e.g., `$`, `Rs`, `€`) via the sidebar, which instantly updates all charts, AI prompts, and financial metrics.
 * **Real-Time KPI Engine:** Computes Total Revenue, Total Expenses, Net Cash Flow, and Profit Margins dynamically.
-* **Interactive Visual Analytics:** Utilizes `Plotly Express` to generate theme-responsive pie charts and bar graphs mapping expense distributions and cash flow comparisons.
+* **Automated Cash Flow Summaries:** Parses timestamps and automatically calculates Inflow, Outflow, and Net Flow grouped by Day, Month, and Year in highly readable side-by-side data tables.
+* **Interactive Visual Analytics:** Utilizes `Plotly Express` to generate theme-responsive pie charts and bar graphs mapping expense distributions and top transactions.
+* **AI Context Compression Engine:** Dynamically groups and aggregates raw transaction datasets before sending them to the Groq API. This bypasses strict free-tier token limits (HTTP 413) and guarantees zero mathematical hallucinations without dropping critical financial data.
 * **Global Keyword Search & Filtering:** Instantly filters transactions across categories and keywords.
 * **Instant CFO Audit Report:** Generates a 3-bullet executive summary evaluating profitability and highlighting operational risks.
 * **Interactive AI Chat Interface:** Features persistent conversation history in the interface, allowing users to query transaction logs using natural language.
@@ -59,7 +61,9 @@ Export / UI Rendering
 ## e. The AI Feature & System Instructions
 QuantCFO integrates Meta's Llama 3.1 (8b-instant) model via the Groq API to provide AI-powered financial intelligence.
 
-To improve numerical consistency and overcome common Large Language Model limitations regarding math hallucinations, financial summaries and category totals are deterministically computed with Pandas before being injected into the LLM prompt context. This highlights a robust engineering approach combining deterministic computation with AI reasoning.
+To improve numerical consistency and overcome common Large Language Model limitations regarding math hallucinations, financial summaries and category totals are deterministically computed with Pandas before being injected into the LLM prompt context. 
+
+Additionally, an integrated **Context Compression Engine** aggregates repetitive transactions into single grouped totals before querying the AI. This engineering choice guarantees that the application never exceeds strict free-tier API token limits while preserving 100% accurate financial totals.
 
 **Core System Prompt Used for Data Querying & Analysis:**
 ```text
