@@ -151,11 +151,11 @@ if uploaded_files:
     
     ai_raw_df = filtered_df.copy()
     ai_raw_df['Type'] = ai_raw_df['Amount'].apply(lambda x: 'Income' if x >= 0 else 'Expense')
+    # Aggregate transactions by Description to massively compress token size without losing ANY transaction data
     ai_raw_df['Formatted Amount'] = ai_raw_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
-    
-    # Only pass relevant columns to the AI to prevent confusion
-    columns_for_ai = [col for col in ai_raw_df.columns if col not in ['Amount']]
-    context_data = ai_raw_df[columns_for_ai].to_string(index=False)
+    compressed_df = ai_raw_df.groupby(['Category', 'Type', 'Description'], as_index=False)['Amount'].sum()
+    compressed_df['Formatted Total'] = compressed_df['Amount'].abs().apply(lambda x: f"{currency_symbol} {x:,.2f}")
+    context_data = compressed_df[['Category', 'Type', 'Description', 'Formatted Total']].to_string(index=False)
 
     tab1, tab2, tab3, tab4 = st.tabs([
         "📊 Executive Overview", 
