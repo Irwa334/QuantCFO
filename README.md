@@ -1,4 +1,4 @@
-# 🪙 QuantCFO — AI-Powered Financial Intelligence Dashboard
+# 🪙 QuantCFO — AI-Powered Financial Analytics Platform
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B)
@@ -7,88 +7,33 @@
 
 ---
 
-## a. Overview & The Real Problem It Solves
+## Overview
 **App Name:** QuantCFO  
-**What it does:** QuantCFO is a full-stack financial data analytics dashboard that ingests raw, unstructured transaction CSV files and automatically transforms them into an interactive visual ledger. Powered by an integrated artificial intelligence engine, it acts as an automated Chief Financial Officer—auditing accounts, answering natural-language queries, and running predictive budget simulations.
+**What it does:** QuantCFO is an AI-powered financial intelligence dashboard that transforms raw financial transactions into interactive analytics, automated insights, and conversational business intelligence. Users can upload messy CSV files, explore dashboards, ask natural-language questions, and run budget simulations—all in one application.
 
-**The Real Problem It Solves:** Small business owners, freelancers, and project student teams frequently struggle with messy, unstandardized financial data exported from various bank accounts. Manually calculating cash flow, categorizing mixed expenses, and forecasting budgets is tedious, error-prone, and time-consuming. QuantCFO solves this by automating the data cleaning (ETL) pipeline, visualizing performance metrics in real-time, and delivering high-level financial consulting without the high cost of a human analyst.
+**The Real Problem It Solves:** Small businesses, startups, and freelancers frequently struggle with messy, unstandardized financial data exported from various bank accounts. Manually calculating cash flow, categorizing mixed expenses, and forecasting budgets is tedious, error-prone, and time-consuming. QuantCFO solves this by automating the data cleaning (ETL) pipeline, visualizing performance metrics in real-time, and delivering high-level financial consulting without the high cost of a human analyst.
 
 ---
 
-## b. Live Deployed URL
+## Highlights
+- End-to-end AI web application
+- Interactive financial dashboards
+- LLM integration using Llama 3.1
+- Automated ETL pipeline
+- Cloud deployment
+- Natural-language financial analysis
+- Responsive Streamlit interface
+
+---
+
+## Live Deployed URL
 🔗 **Access the Live Application Here:** https://quantcfo-sa8ldag6fnnkdgvc3heg6p.streamlit.app/
 
 *(Note: The live deployed version on Streamlit Community Cloud has a platform-enforced hard limit of 200MB for CSV file uploads. When run locally, this limit is extended up to 1GB.)*
 
 ---
 
-## c. Comprehensive Features List
-* **Smart Schema Adapter (ETL) & Robust Parsing:** Automatically detects and standardizes messy CSV file structures (like bank statement preambles). It maps varied column titles, handles accounting number formats (like `(1,500)` or `+2,500`), and gracefully manages blank categories without manual configuration.
-* **Dynamic Currency Support:** Allows users to dynamically input their local currency symbol (e.g., `$`, `Rs`, `€`) via the sidebar, which instantly updates all charts, AI prompts, and financial metrics.
-* **Real-Time KPI Engine:** Computes Total Revenue, Total Expenses, Net Cash Flow, and Profit Margins dynamically.
-* **Automated Cash Flow Summaries:** Parses timestamps and automatically calculates Inflow, Outflow, and Net Flow grouped by Day, Month, and Year in highly readable side-by-side data tables.
-* **Interactive Visual Analytics:** Utilizes `Plotly Express` to generate theme-responsive pie charts and bar graphs mapping expense distributions and top transactions.
-* **AI Context Compression Engine:** Dynamically groups, sorts, and prioritizes the top 100 most impactful transactions before sending them to the Groq API. This bypasses strict free-tier token limits (HTTP 413) and guarantees zero mathematical hallucinations for category totals.
-* **Global Keyword Search & Filtering:** Instantly filters transactions across categories and keywords.
-* **Instant CFO Audit Report:** Generates a 3-bullet executive summary evaluating profitability and highlighting operational risks.
-* **Interactive AI Chat Interface:** Features persistent conversation history in the interface, allowing users to query transaction logs using natural language.
-* **Predictive "What-If" Scenario Simulator:** Allows users to input strategic shifts (e.g., *"What if we reduce operations expenses by 20%?"*) and uses AI reasoning to estimate the impact on profit and profitability.
-* **Clean Ledger & CSV Export:** Provides a fully sortable transaction table with a one-click clean report download button.
-
----
-
-## d. Project Architecture Flow
-```text
-CSV Upload
-      │
-      ▼
-Schema Adapter
-      │
-      ▼
-Data Cleaning
-      │
-      ▼
-Financial KPIs
-      │
- ┌────┴────────┐
- ▼             ▼
-Charts       AI Engine (Pandas pre-calculations + Llama 3.1)
-      │
-      ▼
-Export / UI Rendering
-```
-
-## e. The AI Feature & System Instructions
-QuantCFO integrates Meta's Llama 3.1 (8b-instant) model via the Groq API to provide AI-powered financial intelligence.
-
-To improve numerical consistency and overcome common Large Language Model limitations regarding math hallucinations, financial summaries and category totals are deterministically computed with Pandas before being injected into the LLM prompt context. 
-
-Additionally, an integrated **Context Compression Engine** aggregates repetitive transactions and strictly filters for the Top 100 most financially impactful records before querying the AI. This engineering choice guarantees that the application never exceeds strict free-tier API token limits (HTTP 413) while preserving 100% accurate top-level financial totals.
-
-**Core System Prompt Used for Data Querying & Analysis:**
-```text
-You are a financial data analyst. Answer the user's question accurately using ONLY the provided data.
-
-CRITICAL MATH INSTRUCTION:
-Do NOT add the pre-calculated totals to the individual transactions. They are the exact same data. When asked for totals or comparisons, ONLY use the pre-calculated exact totals provided below.
-
-Pre-calculated Exact Totals:
-{category_totals_str}
-
-Raw Transaction Dataset:
-{context_data}
-
-User Question: {user_query}
-```
-
-## f. Technology Stack & Services Used
-- **Frontend & UI Framework:** Streamlit
-- **Data Processing & Engineering:** Pandas
-- **Data Visualization:** Plotly Express
-- **AI Model Provider:** Groq API (Llama-3.1-8b-instant)
-- **Hosting / Deployment:** Streamlit Community Cloud
-
-## g. Screenshots of the App in Action
+## Screenshots of the App in Action
 **Executive Overview & Visual Analytics Dashboard:**
 *(Displays real-time KPIs, expense distribution breakdown, and revenue vs. expense comparisons)*
 ![Executive Overview Dashboard](Executive Overview Dashboard.png)
@@ -104,7 +49,78 @@ User Question: {user_query}
 **Transaction Ledger & Data Export:**
 *(The standardized table view resulting from the Smart Schema Adapter)*
 ![Transaction Ledger and Data Export](ledger_screenshot.png)
-## h. How to Run the Project Locally
+
+---
+
+## Features
+
+**Data Processing**
+- Smart schema detection
+- Automatic data cleaning
+- Currency support
+
+**Analytics**
+- KPI dashboard
+- Cash-flow summaries
+- Interactive charts
+
+**AI Features**
+- Financial audit
+- AI chat
+- What-if simulations
+
+**Export**
+- Clean ledger
+- CSV download
+
+---
+
+## Project Architecture Flow
+```text
+CSV Upload
+      │
+      ▼
+Smart ETL Pipeline
+      │
+      ▼
+Data Cleaning & Standardisation
+      │
+      ▼
+Financial Analytics Engine
+      │
+ ┌────┴────────────┐
+ ▼                 ▼
+Dashboard       AI Engine
+(Plotly)    (Pandas + Llama 3.1)
+      │
+      ▼
+Interactive Reports
+      │
+      ▼
+Export & Insights
+```
+
+---
+
+## The AI Feature & System Instructions
+QuantCFO integrates Meta's Llama 3.1 (8b-instant) model via the Groq API to provide AI-powered financial intelligence.
+
+I engineered a custom **Context Compression Strategy** to overcome common Large Language Model limitations. To eliminate math hallucinations, all financial summaries and category totals are deterministically computed with Pandas *before* being injected into the LLM prompt context. The AI is explicitly instructed to rely on these pre-calculated totals rather than attempting math on raw transactions. 
+
+Additionally, the system aggregates repetitive transactions and strictly filters for the Top 100 most financially impactful records before querying the AI. This guarantees the application stays well under strict free-tier API token limits (HTTP 413) while preserving 100% accurate top-level financial insights.
+
+---
+
+## Technology Stack & Services Used
+- **Frontend & UI Framework:** Streamlit
+- **Data Processing & Engineering:** Pandas
+- **Data Visualization:** Plotly Express
+- **AI Model Provider:** Groq API (Llama-3.1-8b-instant)
+- **Hosting / Deployment:** Streamlit Community Cloud
+
+---
+
+## How to Run the Project Locally
 Follow these instructions to set up and run QuantCFO on your local machine:
 
 1. Clone the repository:
@@ -132,4 +148,15 @@ GROQ_API_KEY = "your_actual_groq_api_key_here"
 streamlit run app.py
 ```
 
-*Developed independently as an end-to-end AI project submission.*
+---
+
+## My Contributions
+- Designed the complete system architecture
+- Built the ETL pipeline
+- Engineered the financial analytics engine
+- Integrated Groq Llama 3.1
+- Developed the Streamlit frontend
+- Designed AI prompts and context-compression strategy
+- Deployed the application to Streamlit Community Cloud
+
+*Designed and developed independently as a full-stack AI-powered financial analytics application.*

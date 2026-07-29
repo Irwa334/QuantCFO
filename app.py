@@ -4,7 +4,7 @@ import plotly.express as px
 from groq import Groq
 
 # Page Config
-st.set_page_config(page_title="QuantCFO | Financial Intelligence Suite", layout="wide", page_icon="🪙")
+st.set_page_config(page_title="QuantCFO | Financial Analytics Platform", layout="wide", page_icon="🪙")
 
 # Helper function to sanitize text for Streamlit Markdown (prevents dollar signs from triggering LaTeX)
 def sanitize_markdown(text: str) -> str:
@@ -14,7 +14,7 @@ def sanitize_markdown(text: str) -> str:
 if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
 
-st.title("🪙 QuantCFO — AI-Powered Financial Intelligence Dashboard")
+st.title("🪙 QuantCFO — AI-Powered Financial Analytics Platform")
 st.caption("🔄 Version Sync Test - If you see this, Streamlit has updated!")
 
 # --- SIDEBAR: Controls & Settings ---
